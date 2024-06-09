@@ -1,0 +1,56 @@
+services:
+  nats-server:
+    container_name: nats-server
+    image: nats:latest
+    ports:
+      - "8222:8222"
+
+  client-gateway:
+    container_name: client-gateway 
+    build: ./client-gateway
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:3000
+      # Esto es para el hot reload cuando modifique el codigo tambien se modifique en el contenedor
+    volumes:
+      - ./client-gateway:/usr/src/app 
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+      - NATS_SERVERS=nats://nats-server:4222
+  
+  products-microservice:
+    container_name: products-microservice
+    build: ./products-microservice
+    volumes:
+      - ./products-microservice:/usr/src/app
+    command: npm run start:dev
+    environment:
+      - PORT=3001
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=file:./dev.db
+
+  orders-microservice:
+    depends_on:
+      - orders-db
+    container_name: orders-microservice
+    build: ./orders-microservice
+    volumes:
+      - ./orders-microservice:/usr/src/app
+    command: npm run start:dev
+    environment:
+      - PORT=3002
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=postgresql://postgres:123456@orders-db:5432/ordersdb?schema=public
+
+  orders-db:
+    container_name: orders-db
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./orders-microservice/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=ordersdb

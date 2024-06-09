@@ -1,0 +1,9 @@
+[submodule "client-gateway"]
+	path = client-gateway
+	url = git@github.com:HegerAriasSantos/microservices-practice-client-gateway.git
+[submodule "orders-microservice"]
+	path = orders-microservice
+	url = git@github.com:HegerAriasSantos/microservices-practice-orders-microservice.git
+[submodule "products-microservice"]
+	path = products-microservice
+	url = git@github.com:HegerAriasSantos/microservices-practice-products-microservice.git
