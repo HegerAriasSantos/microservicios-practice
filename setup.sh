@@ -38,6 +38,6 @@ echo ".env files created successfully!"
 
 # Build all microservices
 
-docker comnpose up --build 
+docker compose up --build 
 
 

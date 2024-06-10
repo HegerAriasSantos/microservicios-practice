@@ -34,6 +34,7 @@ services:
       - orders-db
     container_name: orders-microservice
     build: ./orders-microservice
+    restart: always
     volumes:
       - ./orders-microservice:/usr/src/app
     command: npm run start:dev
